@@ -6,7 +6,10 @@
 import { attachControllers } from '@decorators/express';
 import { Application } from 'express';
 import { ServerStatusController } from './server-status';
+import { StreamAssetsController } from './stream-assets';
+
+const controllers = [ServerStatusController, StreamAssetsController];
 
 export default function (app: Application) {
-  attachControllers(app, [ServerStatusController]);
+  attachControllers(app, controllers);
 }
