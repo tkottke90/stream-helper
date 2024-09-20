@@ -52,11 +52,17 @@ export class FileService {
   }
 
   getFile(filename: string, logger: LoggerService) {
+    const filePath = path.resolve(filename);
+
+    return createReadStream(filePath);
+  }
+
+  getFileFromStorage(filename: string, logger: LoggerService) {
     const filepath = path.resolve(this.storageLocation, filename);
 
     logger.log('debug', `Creating stream for: ${filepath}`);
 
-    return createReadStream(filepath);
+    return this.getFile(filepath, logger);
   }
 }
 

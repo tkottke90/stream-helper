@@ -40,7 +40,9 @@ export class StreamAssetsController {
       'Content-Type': 'text/html'
     });
 
-    this.fileService.getFile(basename(res.req.path), logger).pipe(res);
+    this.fileService
+      .getFileFromStorage(basename(res.req.path), logger)
+      .pipe(res);
   }
 
   private addLinks(req: express.Request, file: AssetFile) {
