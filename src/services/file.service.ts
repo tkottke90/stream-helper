@@ -54,13 +54,14 @@ export class FileService {
   getFile(filename: string, logger: LoggerService) {
     const filePath = path.resolve(filename);
 
+    logger.log('debug', 'Creating read stream to file', { filePath });
     return createReadStream(filePath);
   }
 
   getFileFromStorage(filename: string, logger: LoggerService) {
     const filepath = path.resolve(this.storageLocation, filename);
 
-    logger.log('debug', `Creating stream for: ${filepath}`);
+    logger.log('debug', 'Loading file from Storage', { filename });
 
     return this.getFile(filepath, logger);
   }

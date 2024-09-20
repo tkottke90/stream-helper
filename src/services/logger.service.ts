@@ -4,20 +4,28 @@ import express from 'express';
 type tempLevels = 'debug' | 'info' | 'error' | 'fatal';
 
 interface ILoggerService<Levels extends string> {
-  log: (level: Levels, message: string, metadata?: Record<string, any>) => void;
+  log: (
+    level: Levels,
+    message: string,
+    metadata?: Record<string, unknown>
+  ) => void;
   error: (error: Error) => void;
 }
 
 export class LoggerService implements ILoggerService<tempLevels> {
-  private readonly logMetadata: Record<string, any> = {};
+  private readonly logMetadata: Record<string, unknown> = {};
 
-  constructor(logMetadata?: Record<string, any>) {
+  constructor(logMetadata?: Record<string, unknown>) {
     if (logMetadata) {
       this.logMetadata = logMetadata;
     }
   }
 
-  log(level: tempLevels, message: string, metadata: Record<string, any> = {}) {
+  log(
+    level: tempLevels,
+    message: string,
+    metadata: Record<string, unknown> = {}
+  ) {
     const metadataStr = JSON.stringify(
       Object.assign(this.logMetadata, metadata)
     );
