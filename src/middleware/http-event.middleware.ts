@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import express from 'express';
 import { LoggerService } from '../services';
 
@@ -10,6 +11,7 @@ export function HttpEventMiddleware(
   next: express.NextFunction
 ) {
   const start = process.hrtime();
+  res.locals.requestId = randomUUID();
 
   res.on('close', () => {
     const diff = process.hrtime(start);
@@ -22,7 +24,8 @@ export function HttpEventMiddleware(
         method: req.method,
         url: req.url,
         timingMS: duration,
-        status: res.statusCode
+        status: res.statusCode,
+        request: res.locals.requestId
       }
     );
   });

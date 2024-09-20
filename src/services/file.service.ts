@@ -1,11 +1,13 @@
 import { Container } from '@decorators/di';
 import { readdir, readFile } from 'fs/promises';
+import { createReadStream } from 'fs';
 import path from 'path';
+import { LoggerService } from './logger.service';
 
 export class AssetFile {
   private _data?: Buffer;
 
-  constructor(readonly path: string) {}
+  constructor(readonly name: string, readonly path: string) {}
 
   async getData() {
     if (!this._data) {
@@ -17,6 +19,7 @@ export class AssetFile {
 
   toDTO(links: Record<string, string> = {}) {
     return {
+      name: this.name,
       path: path.resolve(this.path),
       links
     };
@@ -30,16 +33,30 @@ export class FileService {
     this.storageLocation = process.env['STORAGE_DIR'] ?? './data';
   }
 
-  async listFiles() {
+  async listFiles(filter?: string | RegExp) {
     const list = await readdir(path.resolve(this.storageLocation));
 
-    return list.map(
-      (file) => new AssetFile(path.resolve(this.storageLocation, file))
-    );
+    return list
+      .filter((file) => {
+        if (!filter) return true;
+
+        if (typeof filter === 'string') {
+          return file.includes(filter);
+        } else {
+          return filter.test(file);
+        }
+      })
+      .map(
+        (file) => new AssetFile(file, path.resolve(this.storageLocation, file))
+      );
   }
 
-  getFile(name: string) {
-    const files = this.listFiles();
+  getFile(filename: string, logger: LoggerService) {
+    const filepath = path.resolve(this.storageLocation, filename);
+
+    logger.log('debug', `Creating stream for: ${filepath}`);
+
+    return createReadStream(filepath);
   }
 }
 

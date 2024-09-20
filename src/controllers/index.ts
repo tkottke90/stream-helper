@@ -5,10 +5,15 @@
 
 import { attachControllers } from '@decorators/express';
 import { Application } from 'express';
+import { JSModulesController } from './js-modules';
 import { ServerStatusController } from './server-status';
 import { StreamAssetsController } from './stream-assets';
 
-const controllers = [ServerStatusController, StreamAssetsController];
+const controllers = [
+  JSModulesController,
+  ServerStatusController,
+  StreamAssetsController
+];
 
 export default function (app: Application) {
   attachControllers(app, controllers);

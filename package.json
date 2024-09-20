@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "build:modules": "tsc -p tsconfig.browser.json",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint --fix src/**/*",
     "start": "nodemon"

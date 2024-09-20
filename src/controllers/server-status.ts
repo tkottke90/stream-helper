@@ -11,7 +11,7 @@ export class ServerStatusController {
     res.json({
       version: pgk.version,
       services: {
-        streamAssets: `${createHostStr(req)}${ASSETS.path}`
+        streamAssets: `${createHostStr(req)}${ASSETS.fullPath}`
       }
     });
   }
