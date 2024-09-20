@@ -6,7 +6,7 @@ export function getQueryParam(...keys: string[]) {
     result[key] = '';
 
     if (params.has(key)) {
-      result[key] = params.get('key') ?? '';
+      result[key] = params.get(key) ?? '';
     }
   }
 
