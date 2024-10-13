@@ -1,11 +1,14 @@
 import { Container } from '@decorators/di';
 import { readdir, readFile } from 'fs/promises';
 import { createReadStream } from 'fs';
-import path from 'path';
+import path, { basename } from 'path';
 import { LoggerService } from './logger.service';
+import { JSDOM } from 'jsdom';
+import { HtmlQueryField } from '../types/html-asset';
+import { htmlSelectors } from '../constants';
 
 export class AssetFile {
-  private _data?: Buffer;
+  protected _data?: Buffer;
 
   constructor(readonly name: string, readonly path: string) {}
 
@@ -17,6 +20,10 @@ export class AssetFile {
     return this._data;
   }
 
+  toStream() {
+    return createReadStream(this.path);
+  }
+
   toDTO(links: Record<string, string> = {}) {
     return {
       name: this.name,
@@ -26,15 +33,62 @@ export class AssetFile {
   }
 }
 
+export class HtmlFile extends AssetFile {
+  toDTO(links?: Record<string, string>) {
+    const baseDTO = super.toDTO(links);
+
+    return {
+      name: baseDTO.name,
+      path: baseDTO.path,
+      links: baseDTO.links,
+      fields: this.getQueryFields()
+    };
+  }
+
+  static async fromAssetFile(asset: AssetFile) {
+    return new HtmlFile(asset.name, asset.path);
+  }
+
+  async getQueryFields(): Promise<HtmlQueryField[]> {
+    let fileData = this._data;
+
+    if (!fileData) {
+      fileData = await this.getData();
+    }
+
+    const document = JSDOM.fragment(fileData.toString('utf-8'));
+    const metadataTag = document.querySelector(htmlSelectors.metaQueryFields);
+
+    if (!metadataTag) {
+      return [];
+    }
+
+    const content = metadataTag.getAttribute('content');
+    if (!content) {
+      return [];
+    }
+
+    try {
+      return JSON.parse(content);
+    } catch (err) {
+      console.error(
+        'Unable to parse Query Fields metadata in header' +
+          (err as Error).message
+      );
+      return [];
+    }
+  }
+}
+
 export class FileService {
-  private readonly storageLocation: string;
+  readonly storageLocation: string;
 
   constructor() {
-    this.storageLocation = process.env['STORAGE_DIR'] ?? './data';
+    this.storageLocation = path.resolve(process.env['STORAGE_DIR'] ?? './data');
   }
 
   async listFiles(filter?: string | RegExp) {
-    const list = await readdir(path.resolve(this.storageLocation));
+    const list = await readdir(this.storageLocation);
 
     return list
       .filter((file) => {
@@ -51,11 +105,10 @@ export class FileService {
       );
   }
 
-  getFile(filename: string, logger: LoggerService) {
+  getFile(filename: string) {
     const filePath = path.resolve(filename);
 
-    logger.log('debug', 'Creating read stream to file', { filePath });
-    return createReadStream(filePath);
+    return new AssetFile(basename(filename), filePath);
   }
 
   getFileFromStorage(filename: string, logger: LoggerService) {
@@ -63,7 +116,7 @@ export class FileService {
 
     logger.log('debug', 'Loading file from Storage', { filename });
 
-    return this.getFile(filepath, logger);
+    return this.getFile(filepath);
   }
 }
 

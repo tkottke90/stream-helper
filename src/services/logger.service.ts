@@ -27,7 +27,7 @@ export class LoggerService implements ILoggerService<tempLevels> {
     metadata: Record<string, unknown> = {}
   ) {
     const metadataStr = JSON.stringify(
-      Object.assign(this.logMetadata, metadata)
+      Object.assign({}, this.logMetadata, metadata)
     );
 
     console.log(
@@ -48,8 +48,11 @@ export class LoggerService implements ILoggerService<tempLevels> {
    * @param res Express Response object
    * @returns Logger with metadata configured
    */
-  requestLogger(res: express.Response) {
-    return new LoggerService({ request: res.locals?.requestId });
+  requestLogger(res: express.Response, name?: string) {
+    return new LoggerService({
+      request: res.locals?.requestId,
+      methodName: name
+    });
   }
 }
 

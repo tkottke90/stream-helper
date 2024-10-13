@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/default-styles.css">
+    <title>Stream Assets</title>
+    <style>
+      body,
+      header {
+        display: flex;
+      }
+      :root {
+        --theme-primary-hue: 209deg;
+      }
+      body {
+        flex-direction: column;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>Stream Assets</h2>
+      <nav>
+        <a href="/">Home</a>
+      </nav>
+    </header>
+
+    <main>
+      <h3>Available Stream Assets</h3>
+
+    </main>
+
+    <footer>
+      <p>&#169; Thomas Kottke 2024</p>
+    </footer>
+
+
+
+    <script module>
+
+
+
+      const assets = fetch('/api/v1/stream-assets')
+        .then((res) => res.json())
+        .then(({ files }) => {
+          console.dir(files);
+          // files.forEach((file) => createAccordion(file));
+        });
+    </script>
+  </body>
+</html>
