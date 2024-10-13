@@ -20,27 +20,34 @@
     </style>
   </head>
   <body>
-    <header>
+    <header class="header-gradient p-4 flex items-center gap-4 text-white">
       <h2>Stream Assets</h2>
       <nav>
-        <a href="/">Home</a>
+        <!-- <a href="/">Home</a> -->
       </nav>
     </header>
 
-    <main>
-      <h3>Available Stream Assets</h3>
-      <table id="asset-table">
-        <thead>
-          <tr>
-            <th>Asset Name</th>
-            <th>Has Config</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-
-        </tbody>
-      </table>
+    <main class="p-4">
+      <div class="card">
+        <h3>Available Stream Assets</h3>
+        <p>List of assets currently available that can be used in your streams</p>
+        <br />
+        <table id="asset-table" class="w-full">
+          <col class="w-3/4" >
+          <col class="w-1/6" >
+          <col class="w-1/6" >
+          <thead class="border-b-2 border-b-steel-blue-500">
+            <tr>
+              <th>Asset Name</th>
+              <th>Has Config</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+  
+          </tbody>
+        </table>
+      </div>
     </main>
 
     <footer>
@@ -50,15 +57,49 @@
 
 
     <script module>
+      const table = document.getElementById('asset-table');
 
+      function createTableRow() {
+        const row = document.createElement('tr');
 
+        row.addColumn = (value, className = []) => {
+          const cell = document.createElement('td');
+          cell.innerHTML = value;
+          cell.classList.add(...className)
 
-      const assets = fetch('/api/v1/stream-assets')
+          row.appendChild(cell)
+        }
+
+        return row;
+      }
+
+      function loadAssets() {
+        return fetch('/api/v1/stream-assets')
         .then((res) => res.json())
+      }
+
+      function updateTable(rows) {
+        const tableBody = table.querySelector('tbody');
+
+        tableBody.innerHTML = ''
+        rows.forEach(row => tableBody.appendChild(row))
+      }
+
+      function assetToRow(streamAssetFile) {
+        const row = createTableRow();
+
+        row.addColumn(streamAssetFile.name, ['px-2'])
+        row.addColumn(streamAssetFile.fields.length > 0 ? 'Yes' : 'No', ['text-center'])
+        row.addColumn('')
+
+        return row;
+      }
+
+      loadAssets()
         .then(({ files }) => {
-          console.dir(files);
-          // files.forEach((file) => createAccordion(file));
-        });
+          return files.map(file => assetToRow(file))
+        })
+        .then(rows => updateTable(rows));
     </script>
   </body>
 </html>

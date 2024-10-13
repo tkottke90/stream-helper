@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "build:modules": "tsc -p tsconfig.browser.json && tailwindcss -i ./src/templates/index.css -o ./public/index.css --minify",
+    "build:modules": "tsc -p tsconfig.browser.json && tailwindcss -i ./src/templates/index.css -o ./public/index.css",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint --fix src/**/*",
     "start": "nodemon"
