@@ -54,7 +54,9 @@
       <p>&#169; Thomas Kottke 2024</p>
     </footer>
 
+    <dialog>
 
+    </dialog>
 
     <script module>
       const table = document.getElementById('asset-table');
@@ -88,9 +90,22 @@
       function assetToRow(streamAssetFile) {
         const row = createTableRow();
 
+        const hasFields = streamAssetFile.fields.length > 0
+
         row.addColumn(streamAssetFile.name, ['px-2'])
-        row.addColumn(streamAssetFile.fields.length > 0 ? 'Yes' : 'No', ['text-center'])
-        row.addColumn('')
+        row.addColumn(hasFields ? 'Yes' : 'No', ['text-center'])
+        
+        let actionColumn = '';
+        if (hasFields) {
+          const dialogBtn = document.createElement('button');
+          dialogBtn.type = "button";
+
+          dialogBtn.textContent = "Generate";
+
+          actionColumn = dialogBtn.outerHTML;
+        }
+        
+        row.addColumn(actionColumn, ['flex', 'justify-evenly'])
 
         return row;
       }
