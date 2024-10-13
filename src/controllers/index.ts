@@ -4,7 +4,9 @@
 // controllers method
 
 import { attachControllers } from '@decorators/express';
-import { Application } from 'express';
+import { Application, Router } from 'express';
+import { HttpEventMiddleware } from '../middleware';
+import { API_ROOT } from '../routes';
 import { JSModulesController } from './js-modules';
 import { ServerStatusController } from './server-status';
 import { StreamAssetsController } from './stream-assets';
@@ -15,6 +17,11 @@ const controllers = [
   StreamAssetsController
 ];
 
+const v1_api = Router();
+
 export default function (app: Application) {
-  attachControllers(app, controllers);
+  v1_api.use(HttpEventMiddleware);
+  attachControllers(v1_api, controllers);
+
+  app.use(API_ROOT.path, v1_api);
 }

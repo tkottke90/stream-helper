@@ -6,7 +6,7 @@ import { JS_MODULES } from '../routes';
 import { FileService } from '../services/file.service';
 import { LoggerService } from '../services/logger.service';
 
-@Controller(JS_MODULES.fullPath)
+@Controller(JS_MODULES.path)
 export class JSModulesController {
   protected name = 'JS Modules';
 
@@ -21,8 +21,10 @@ export class JSModulesController {
 
     res.header('Content-Type', 'application/javascript');
 
+    logger.log('info', 'Streaming file response');
     this.fileService
-      .getFile(path.resolve(`./data/js/${req.path}`), logger)
+      .getFile(path.resolve(`./data/js/${req.path}`))
+      .toStream()
       .pipe(res);
   }
 }

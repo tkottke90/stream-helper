@@ -1,0 +1,77 @@
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: #efefef;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+main {
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+.accordion {
+  max-width: 500px;;
+}
+
+.accordion {
+  border-radius: 0.5rem;
+}
+
+.accordion header {
+  background: var(--accordion-header-color, hsl(107, 38%, 50%));
+  color: #fff;
+  padding: 0.5rem 1rem;
+  
+  label {
+    cursor: pointer;
+    font-weight: bold;
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    svg {
+      stroke: currentColor;
+      fill: currentColor;
+      width: 1.5rem;
+      height: 1.5rem;
+      line-height: 1.5rem;
+      
+      transition: transform 400ms ease-out;
+    }
+  }
+}
+
+.accordion section {  
+  will-change: max-height;
+  height: fit-content;
+  max-height: 0;
+  transition: max-height 500ms ease-out;
+  overflow: hidden;
+  
+  border: 1px solid var(--theme-primary-200);
+  border-top: 0;
+
+  p {
+    padding: 0.5rem 1rem;
+    margin: 0;
+  }
+}
+
+.accordion input:checked ~ header svg {
+  transform: rotate(180deg);
+}
+
+.accordion input:checked ~ section {
+  max-height: 1000px;
+  transition: max-height 100ms ease-out;
+}
+
